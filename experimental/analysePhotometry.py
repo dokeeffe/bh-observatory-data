@@ -1,17 +1,5 @@
-import fnmatch
 import glob
-import os
-import datetime
-from astropy.io import fits
-from astropy.stats import sigma_clipped_stats
-from photutils import DAOStarFinder
-from photutils import aperture_photometry, CircularAperture
-import matplotlib.pyplot as plt
-from astropy.io import ascii
-from astropy import wcs
 import pandas as pd
-import numpy as np
-
 
 def load_all(pattern):
     allFiles = glob.glob(pattern)
@@ -25,6 +13,6 @@ def load_all(pattern):
 
 if __name__ == '__main__':
     frame = load_all('*.csv')
-    print frame
-
-
+    # rs = frame[frame['filter'] == 'PV'].sort_values(['ra','dec']).head(100)
+    rs = frame[(frame['dec'] > 36.4841) & (frame['dec'] < 36.4842) & (frame['ra'] > 250.4089) & (frame['ra'] < 250.4090) ].sort_values(['ra','dec']).head(100)
+    print rs[['aperture_sum','date','ra','dec', 'filter']]

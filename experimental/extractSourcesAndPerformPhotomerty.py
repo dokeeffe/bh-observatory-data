@@ -29,7 +29,7 @@ def find_fits_near(search_ra, search_dec, search_radius=1.5):
     return fits_files_to_process
 
 
-def process_files(files_to_process, csv_target):
+def process_files(q, files_to_process, csv_target):
     frames = []
     for file in files_to_process:
         hdulist = fits.open(file)
@@ -59,8 +59,9 @@ def process_files(files_to_process, csv_target):
         # apertures.plot(color='blue', lw=1.5, alpha=0.5)
         # plt.show()
     result = pd.concat(frames)
-    result.to_csv(csv_target)
-    print 'saved chunk {}',csv_target
+    q.put(result)
+    # result.to_csv(csv_target)
+    # print 'saved chunk {}',csv_target
 
 
 def split_list(a_list):
@@ -77,11 +78,18 @@ if __name__ == '__main__':
     chunk_3, chunk_4 = split_list(chunk_b)
 
     q = Queue()
-    p1 = Process(target=process_files, args=(chunk_1, 'output1.csv'))
-    p2 = Process(target=process_files, args=(chunk_2, 'output2.csv'))
-    p3 = Process(target=process_files, args=(chunk_3, 'output3.csv'))
-    p4 = Process(target=process_files, args=(chunk_4, 'output4.csv'))
+    p1 = Process(target=process_files, args=(q,chunk_1, 'output1.csv'))
+    p2 = Process(target=process_files, args=(q,chunk_2, 'output2.csv'))
+    p3 = Process(target=process_files, args=(q,chunk_3, 'output3.csv'))
+    p4 = Process(target=process_files, args=(q,chunk_4, 'output4.csv'))
     p1.start()
     p2.start()
     p3.start()
     p4.start()
+    results = []
+    results.append(q.get())
+    results.append(q.get())
+    results.append(q.get())
+    results.append(q.get())
+    result = pd.concat(results)
+    result.to_csv('output.csv')
