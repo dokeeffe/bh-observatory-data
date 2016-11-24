@@ -110,7 +110,7 @@ def generate_key_filter_binning_date(ccd):
     :param ccd:
     :return:
     """
-    date_obs = datetime.datetime.strptime(ccd.header['DATE-OBS'], '%Y-%m-%dT%H:%M:%S')
+    date_obs = datetime.datetime.strptime(ccd.header['DATE-OBS'], '%Y-%m-%dT%H:%M:%S.%f')
     key = str(ccd.header['FILTER']) + '_' \
           + str(ccd.header['XBINNING']) + 'X' \
           + "%04d-%02d-%02d" % (date_obs.year, date_obs.month, date_obs.day)
@@ -181,9 +181,9 @@ def flat_correct(flat_imagefilecollection,ccd):
     flat = None
     # Now locate the best flat based on date
     last_date_diff = sys.maxsize
-    date_obs = datetime.datetime.strptime(ccd.header['DATE-OBS'], '%Y-%m-%dT%H:%M:%S')
+    date_obs = datetime.datetime.strptime(ccd.header['DATE-OBS'], '%Y-%m-%dT%H:%M:%S.%f')
     for flat_candidate in candidate_flats:
-        date_flat = datetime.datetime.strptime(flat_candidate.header['DATE-OBS'], '%Y-%m-%dT%H:%M:%S')
+        date_flat = datetime.datetime.strptime(flat_candidate.header['DATE-OBS'], '%Y-%m-%dT%H:%M:%S.%f')
         candidate_date_difference = abs((date_obs - date_flat).seconds)
         if candidate_date_difference < last_date_diff:
             last_date_diff = candidate_date_difference
@@ -219,14 +219,14 @@ def extract_date_from(ccd):
     """
     Returns a string YYYY-MM-DD from the ccd header DATE-OBS timestamp
     """
-    date_obs = datetime.datetime.strptime(ccd.header['DATE-OBS'], '%Y-%m-%dT%H:%M:%S')
+    date_obs = datetime.datetime.strptime(ccd.header['DATE-OBS'], '%Y-%m-%dT%H:%M:%S.%f')
     return "%04d-%02d-%02d" % (date_obs.year, date_obs.month, date_obs.day)
 
 def extract_datetime_from(ccd):
     """
     Returns a string YYYY-MM-DD-HH-MM-SS from the ccd header DATE-OBS timestamp
     """
-    date_obs = datetime.datetime.strptime(ccd.header['DATE-OBS'], '%Y-%m-%dT%H:%M:%S')
+    date_obs = datetime.datetime.strptime(ccd.header['DATE-OBS'], '%Y-%m-%dT%H:%M:%S.%f')
     return "%04d-%02d-%02d-%02d-%02d-%02d" % (date_obs.year, date_obs.month, date_obs.day, date_obs.hour, date_obs.minute, date_obs.second)
 
 def move_to_archive(directory,files, prefix='uncalibrated_archive_'):
