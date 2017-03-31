@@ -3,8 +3,9 @@ from unittest import TestCase
 import astropy.units as u
 
 from ccdproc import CCDData
+from ccdproc import ImageFileCollection
 
-from .. import calibrationUtils
+import calibrationUtils
 
 
 class ImageCollectionUtilsTester(TestCase):
@@ -39,19 +40,47 @@ class ImageCollectionUtilsTester(TestCase):
         self.assertEqual('G_2X',result)
 
     def test_generate_key_filter_binning_date(self):
+        # arrange
         ccd = CCDData(np.zeros((10, 10)), unit=u.adu)
         ccd.header['FILTER']='HA'
         ccd.header['XBINNING']=2
-        ccd.header['DATE-OBS']='2016-02-14T23:15:03'
+        ccd.header['DATE-OBS']='2016-02-14T23:15:03.3'
+
+        # act
         result = calibrationUtils.generate_key_filter_binning_date(ccd)
+
+        # assert
         self.assertEqual('HA_2X2016-02-14',result)
 
     def test_subtract_best_bias_temp_match(self):
-        assert True
+        # arrange
+        ccd = CCDData(np.arange(10,20), unit="adu")
+        metadata = {'XBINNING': 1, 'FRAME': 'light', 'CCD-TEMP': -20}
+        ccd.header = metadata
+        bias_imagefilecollection = ImageFileCollection('data')
+
+        # act
+        result = calibrationUtils.subtract_best_bias_temp_match(bias_imagefilecollection,ccd)
+
+        # assert
+        self.assertListEqual([10, 10, 10, 10, 10, 10, 10, 10, 10, 10],list(result.data))
+        self.assertEqual('data/bias-25x1.fits',result.header['CALLIBRATION-BIAS'])
+        print(result.header)
 
     def test_subtract_best_dark(self):
-        assert True
+        # arrange
+        ccd = CCDData(np.arange(10,20), unit="adu")
+        metadata = {'XBINNING': 2, 'FRAME': 'light', 'CCD-TEMP': -20, 'EXPTIME': 120}
+        ccd.header = metadata
+        dark_imagefilecollection = ImageFileCollection('data')
 
+        # act
+        result = calibrationUtils.subtract_best_dark(dark_imagefilecollection,ccd)
+
+        # assert
+        self.assertListEqual([10, 10, 10, 10, 10, 10, 10, 10, 10, 10],list(result.data))
+        self.assertEqual('data/dark-20x2_180.fits',result.header['CALLIBRATION-DARK'])
+        print(result.header)
     def test_flat_correct(self):
         assert True
 
@@ -73,7 +102,7 @@ class ImageCollectionUtilsTester(TestCase):
         ccd.header['NAXIS1'] = 10
         ccd.header['NAXIS2'] = 10
         result = calibrationUtils.resample_to_BIN2(ccd)
-        print result
+        print(result)
         assert result.data[0][2] == 4
         assert result.data[2][3] == 52
         assert result.data[4][4] == 99
@@ -87,13 +116,13 @@ class ImageCollectionUtilsTester(TestCase):
 
     def test_extract_date_timestamp_from(self):
         ccd = CCDData(np.zeros((10, 10)), unit=u.adu)
-        ccd.header['DATE-OBS']='2016-09-01T00:35:51'
+        ccd.header['DATE-OBS']='2016-09-01T00:35:51.3'
         result = calibrationUtils.extract_date_from(ccd)
         assert result == '2016-09-01'
 
     def test_extract_datetime_timestamp_from(self):
         ccd = CCDData(np.zeros((10, 10)), unit=u.adu)
-        ccd.header['DATE-OBS']='2016-09-01T00:35:51'
+        ccd.header['DATE-OBS']='2016-09-01T00:35:51.3'
         result = calibrationUtils.extract_datetime_from(ccd)
         assert result == '2016-09-01-00-35-51'
 

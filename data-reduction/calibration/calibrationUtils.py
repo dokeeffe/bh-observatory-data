@@ -125,18 +125,21 @@ def subtract_best_bias_temp_match(bias_imagefilecollection,ccd):
     :return:
     """
     temp_diff = 100
-    result = None
+    best_bias = None
+    best_bias_filename = ''
     for filename in bias_imagefilecollection.files_filtered(FRAME='Bias',XBINNING=ccd.header['XBINNING']):
-        bias_candidate = CCDData.read(bias_imagefilecollection.location + filename, unit=u.adu)
+        best_bias_filename = os.path.join(bias_imagefilecollection.location, filename)
+        bias_candidate = CCDData.read(best_bias_filename, unit=u.adu)
         if abs(bias_candidate.header['CCD-TEMP'] - ccd.header['CCD-TEMP']) < temp_diff:
-            result = bias_candidate
+            best_bias = bias_candidate
             temp_diff = abs(bias_candidate.header['CCD-TEMP'] - ccd.header['CCD-TEMP'])
-    if result is None:
+    if best_bias is None:
         logging.error('Could not find bias for, binning:' + str(ccd.header['XBINNING']) + ' temp:'+str(ccd.header['CCD-TEMP']))
         # FIXME: throw an exception here, there should be no excuse for missing bias data!!!
         return ccd
     else:
-        corrected = ccdproc.subtract_bias(ccd, result)
+        corrected = ccdproc.subtract_bias(ccd, best_bias)
+        corrected.header['CALLIBRATION-BIAS'] = best_bias_filename
         if temp_diff > 2:
             logging.warn('Temperature difference between bias and image = ' + str(temp_diff))
         return corrected
@@ -149,18 +152,21 @@ def subtract_best_dark(dark_imagefilecollection,ccd):
     :return: the corrected ccd
     """
     temp_diff = 100
-    result = None
+    best_dark = None
+    best_dark_filename = None
     for filename in dark_imagefilecollection.files_filtered(FRAME='Dark',XBINNING=ccd.header['XBINNING']):
-        dark_candidate = CCDData.read(dark_imagefilecollection.location + filename, unit=u.adu)
+        best_dark_filename = os.path.join(dark_imagefilecollection.location, filename)
+        dark_candidate = CCDData.read(best_dark_filename, unit=u.adu)
         if abs(dark_candidate.header['CCD-TEMP'] - ccd.header['CCD-TEMP']) < temp_diff:
-            result = dark_candidate
+            best_dark = dark_candidate
             temp_diff = abs(dark_candidate.header['CCD-TEMP'] - ccd.header['CCD-TEMP'])
-    if result is None:
+    if best_dark is None:
         logging.error('Could not find dark for, binning:' + str(ccd.header['XBINNING']) + ' temp:'+str(ccd.header['CCD-TEMP']))
         #FIXME: throw an exception here, there should be no excuse for missing data!!!
         return ccd
     else:
-        corrected = ccdproc.subtract_dark(ccd, result, exposure_time='EXPTIME', exposure_unit=u.second)
+        corrected = ccdproc.subtract_dark(ccd, best_dark, exposure_time='EXPTIME', exposure_unit=u.second)
+        corrected.header['CALLIBRATION-DARK'] = best_dark_filename
         if temp_diff > 2:
             logging.warn('Temperature difference between dark and image = ' + str(temp_diff))
         return corrected
