@@ -139,7 +139,7 @@ def subtract_best_bias_temp_match(bias_imagefilecollection,ccd):
         return ccd
     else:
         corrected = ccdproc.subtract_bias(ccd, best_bias)
-        corrected.header['CALLIBRATION-BIAS'] = best_bias_filename
+        corrected.header['CALIBRATION-BIAS'] = best_bias_filename
         if temp_diff > 2:
             logging.warn('Temperature difference between bias and image = ' + str(temp_diff))
         return corrected
@@ -166,7 +166,7 @@ def subtract_best_dark(dark_imagefilecollection,ccd):
         return ccd
     else:
         corrected = ccdproc.subtract_dark(ccd, best_dark, exposure_time='EXPTIME', exposure_unit=u.second)
-        corrected.header['CALLIBRATION-DARK'] = best_dark_filename
+        corrected.header['CALIBRATION-DARK'] = best_dark_filename
         if temp_diff > 2:
             logging.warn('Temperature difference between dark and image = ' + str(temp_diff))
         return corrected
@@ -184,19 +184,30 @@ def flat_correct(flat_imagefilecollection,ccd):
     #TODO: find the best candidate flat based on closest in time relative to the ccd being corrected (instead of the first one in the collection)
     if candidate_flats is None:
         logging.error('Could not find flat for key ' + key)
-    flat = None
-    # Now locate the best flat based on date
+    flat, last_date_diff = find_closest_date_match(candidate_flats, ccd)
+    logging.warn('Seconds time difference between flat and image = ' + str(last_date_diff))
+    corrected = ccdproc.flat_correct(ccd,flat)
+    corrected.header['CALIBRATION-FLAT-DATE'] = flat.header['DATE-OBS']
+    return corrected
+
+
+def find_closest_date_match(candidate_ccds, ccd):
+    '''
+    Finds the closest match by time. Checks all candidate_ccds for the closest DATE-OBS of the passed ccd
+    :param candidate_ccds:
+    :param ccd:
+    :return:
+    '''
+    result = None
     last_date_diff = sys.maxsize
     date_obs = datetime.datetime.strptime(ccd.header['DATE-OBS'], '%Y-%m-%dT%H:%M:%S.%f')
-    for flat_candidate in candidate_flats:
-        date_flat = datetime.datetime.strptime(flat_candidate.header['DATE-OBS'], '%Y-%m-%dT%H:%M:%S.%f')
-        candidate_date_difference = abs((date_obs - date_flat).seconds)
+    for candidate in candidate_ccds:
+        date_flat = datetime.datetime.strptime(candidate.header['DATE-OBS'], '%Y-%m-%dT%H:%M:%S.%f')
+        candidate_date_difference = abs((date_obs - date_flat).total_seconds())
         if candidate_date_difference < last_date_diff:
             last_date_diff = candidate_date_difference
-            flat = flat_candidate
-    logging.warn('Seconds time difference between flat and image = ' + str(last_date_diff))
-    flat = candidate_flats[0]
-    return ccdproc.flat_correct(ccd,flat)
+            result = candidate
+    return result, last_date_diff
 
 
 def resample_to_BIN2(ccd):

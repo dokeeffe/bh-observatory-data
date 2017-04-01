@@ -45,4 +45,47 @@ def setup_dark_data():
     ccd.write('dark-25x2_180.fits')
 
 
-setup_dark_data()
+def setup_flat_data():
+    ccd = CCDData(np.arange(10,20), unit="adu")
+    metadata = {'XBINNING': 1, 'FRAME': 'Flat Field', 'CCD-TEMP': -20, 'FILTER': 'Red', 'DATE-OBS': '2017-03-01T21:03:22.409'}
+    ccd.header = metadata
+    ccd.write('flat-20x1_Red-0301.fits')
+
+    ccd = CCDData(np.arange(10,20), unit="adu")
+    metadata = {'XBINNING': 2, 'FRAME': 'Flat Field', 'CCD-TEMP': -20, 'FILTER': 'Red', 'DATE-OBS': '2017-03-01T21:03:22.409'}
+    ccd.header = metadata
+    ccd.write('flat-20x2_Red-0301.fits')
+
+    ccd = CCDData(np.arange(10,20), unit="adu")
+    metadata = {'XBINNING': 1, 'FRAME': 'Flat Field', 'CCD-TEMP': -20, 'FILTER': 'Red', 'DATE-OBS': '2017-04-01T21:03:22.409'}
+    ccd.header = metadata
+    ccd.write('flat-20x1_Red-0401.fits')
+
+    ccd = CCDData(np.arange(10,20), unit="adu")
+    metadata = {'XBINNING': 2, 'FRAME': 'Flat Field', 'CCD-TEMP': -20, 'FILTER': 'Red', 'DATE-OBS': '2017-04-01T21:03:22.409'}
+    ccd.header = metadata
+    ccd.write('flat-20x2_Red-0401.fits')
+
+    ccd = CCDData(np.arange(10,20), unit="adu")
+    metadata = {'XBINNING': 1, 'FRAME': 'Flat Field', 'CCD-TEMP': -20, 'FILTER': 'Lum', 'DATE-OBS': '2017-03-01T21:03:22.409'}
+    ccd.header = metadata
+    ccd.write('flat-20x1_Lum-0301.fits')
+
+    ccd = CCDData(np.arange(10,20), unit="adu")
+    metadata = {'XBINNING': 2, 'FRAME': 'Flat Field', 'CCD-TEMP': -20, 'FILTER': 'Lum', 'DATE-OBS': '2017-03-01T21:03:22.409'}
+    ccd.header = metadata
+    ccd.write('flat-20x2_Lum-0301.fits')
+
+    ccd = CCDData(np.arange(10,20), unit="adu")
+    metadata = {'XBINNING': 1, 'FRAME': 'Flat Field', 'CCD-TEMP': -20, 'FILTER': 'Lum', 'DATE-OBS': '2017-04-01T21:03:22.409'}
+    ccd.header = metadata
+    ccd.write('flat-20x1_Lum-0401.fits')
+
+    ccd = CCDData(np.arange(10,20), unit="adu")
+    metadata = {'XBINNING': 2, 'FRAME': 'Flat Field', 'CCD-TEMP': -20, 'FILTER': 'Lum', 'DATE-OBS': '2017-04-01T21:03:22.409'}
+    ccd.header = metadata
+    ccd.write('flat-20x2_Lum-0401.fits')
+
+
+
+setup_flat_data()

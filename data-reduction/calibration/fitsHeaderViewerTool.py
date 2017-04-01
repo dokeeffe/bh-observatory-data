@@ -10,4 +10,4 @@ hdulist = fits.open(sys.argv[1])
 header = hdulist[0].header
 
 # Print the header keys from the file to the terminal
-print header.keys
+print(header.keys)

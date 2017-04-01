@@ -57,14 +57,14 @@ class ImageCollectionUtilsTester(TestCase):
         ccd = CCDData(np.arange(10, 20), unit="adu")
         metadata = {'XBINNING': 1, 'FRAME': 'light', 'CCD-TEMP': -20}
         ccd.header = metadata
-        bias_imagefilecollection = ImageFileCollection('data')
+        bias_imagefilecollection = ImageFileCollection('data/')
 
         # act
         result = calibrationUtils.subtract_best_bias_temp_match(bias_imagefilecollection,ccd)
 
         # assert
         self.assertListEqual([10, 10, 10, 10, 10, 10, 10, 10, 10, 10],list(result.data))
-        self.assertEqual('data/bias-20x1.fits',result.header['CALLIBRATION-BIAS'])
+        self.assertEqual('data/bias-20x1.fits',result.header['CALIBRATION-BIAS'])
         print(result.header)
 
     def test_subtract_best_dark(self):
@@ -72,17 +72,30 @@ class ImageCollectionUtilsTester(TestCase):
         ccd = CCDData(np.arange(10,20), unit="adu")
         metadata = {'XBINNING': 2, 'FRAME': 'light', 'CCD-TEMP': -20, 'EXPTIME': 120}
         ccd.header = metadata
-        dark_imagefilecollection = ImageFileCollection('data')
+        dark_imagefilecollection = ImageFileCollection('data/')
 
         # act
         result = calibrationUtils.subtract_best_dark(dark_imagefilecollection,ccd)
 
         # assert
         self.assertListEqual([10, 10, 10, 10, 10, 10, 10, 10, 10, 10],list(result.data))
-        self.assertEqual('data/dark-20x2_120.fits', result.header['CALLIBRATION-DARK'])
+        self.assertEqual('data/dark-20x2_120.fits', result.header['CALIBRATION-DARK'])
         print(result.header)
+
     def test_flat_correct(self):
-        assert True
+        # arrange
+        ccd = CCDData(np.arange(100,110), unit="adu")
+        metadata = {'XBINNING': 2, 'FRAME': 'light', 'CCD-TEMP': -20, 'EXPTIME': 120, 'FILTER': 'Lum', 'DATE-OBS': '2017-04-01T19:03:22.111'}
+        ccd.header = metadata
+        flat_imagefilecollection = ImageFileCollection('data/')
+
+        # act
+        result = calibrationUtils.flat_correct(flat_imagefilecollection,ccd)
+
+        # assert
+        self.assertEqual(145, result.data[0])
+        self.assertEqual('2017-04-01T21:03:22.409', result.header['CALIBRATION-FLAT-DATE'])
+        print(result.header)
 
     def test_resample_to_BIN2_from_bin2_returns_same(self):
         """
