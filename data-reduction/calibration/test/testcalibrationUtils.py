@@ -54,7 +54,7 @@ class ImageCollectionUtilsTester(TestCase):
 
     def test_subtract_best_bias_temp_match(self):
         # arrange
-        ccd = CCDData(np.arange(10,20), unit="adu")
+        ccd = CCDData(np.arange(10, 20), unit="adu")
         metadata = {'XBINNING': 1, 'FRAME': 'light', 'CCD-TEMP': -20}
         ccd.header = metadata
         bias_imagefilecollection = ImageFileCollection('data')
@@ -64,7 +64,7 @@ class ImageCollectionUtilsTester(TestCase):
 
         # assert
         self.assertListEqual([10, 10, 10, 10, 10, 10, 10, 10, 10, 10],list(result.data))
-        self.assertEqual('data/bias-25x1.fits',result.header['CALLIBRATION-BIAS'])
+        self.assertEqual('data/bias-20x1.fits',result.header['CALLIBRATION-BIAS'])
         print(result.header)
 
     def test_subtract_best_dark(self):
@@ -79,7 +79,7 @@ class ImageCollectionUtilsTester(TestCase):
 
         # assert
         self.assertListEqual([10, 10, 10, 10, 10, 10, 10, 10, 10, 10],list(result.data))
-        self.assertEqual('data/dark-20x2_180.fits',result.header['CALLIBRATION-DARK'])
+        self.assertEqual('data/dark-20x2_120.fits', result.header['CALLIBRATION-DARK'])
         print(result.header)
     def test_flat_correct(self):
         assert True

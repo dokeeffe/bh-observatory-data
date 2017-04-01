@@ -128,10 +128,10 @@ def subtract_best_bias_temp_match(bias_imagefilecollection,ccd):
     best_bias = None
     best_bias_filename = ''
     for filename in bias_imagefilecollection.files_filtered(FRAME='Bias',XBINNING=ccd.header['XBINNING']):
-        best_bias_filename = os.path.join(bias_imagefilecollection.location, filename)
-        bias_candidate = CCDData.read(best_bias_filename, unit=u.adu)
+        bias_candidate = CCDData.read(os.path.join(bias_imagefilecollection.location, filename), unit=u.adu)
         if abs(bias_candidate.header['CCD-TEMP'] - ccd.header['CCD-TEMP']) < temp_diff:
             best_bias = bias_candidate
+            best_bias_filename = os.path.join(bias_imagefilecollection.location, filename)
             temp_diff = abs(bias_candidate.header['CCD-TEMP'] - ccd.header['CCD-TEMP'])
     if best_bias is None:
         logging.error('Could not find bias for, binning:' + str(ccd.header['XBINNING']) + ' temp:'+str(ccd.header['CCD-TEMP']))
@@ -155,10 +155,10 @@ def subtract_best_dark(dark_imagefilecollection,ccd):
     best_dark = None
     best_dark_filename = None
     for filename in dark_imagefilecollection.files_filtered(FRAME='Dark',XBINNING=ccd.header['XBINNING']):
-        best_dark_filename = os.path.join(dark_imagefilecollection.location, filename)
-        dark_candidate = CCDData.read(best_dark_filename, unit=u.adu)
+        dark_candidate = CCDData.read(os.path.join(dark_imagefilecollection.location, filename), unit=u.adu)
         if abs(dark_candidate.header['CCD-TEMP'] - ccd.header['CCD-TEMP']) < temp_diff:
             best_dark = dark_candidate
+            best_dark_filename = os.path.join(dark_imagefilecollection.location, filename)
             temp_diff = abs(dark_candidate.header['CCD-TEMP'] - ccd.header['CCD-TEMP'])
     if best_dark is None:
         logging.error('Could not find dark for, binning:' + str(ccd.header['XBINNING']) + ' temp:'+str(ccd.header['CCD-TEMP']))
