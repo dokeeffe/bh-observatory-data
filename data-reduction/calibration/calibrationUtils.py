@@ -139,7 +139,7 @@ def subtract_best_bias_temp_match(bias_imagefilecollection,ccd):
         return ccd
     else:
         corrected = ccdproc.subtract_bias(ccd, best_bias)
-        corrected.header['CALIBRATION-BIAS'] = best_bias_filename
+        corrected.header['CALBIAS'] = best_bias_filename
         if temp_diff > 2:
             logging.warn('Temperature difference between bias and image = ' + str(temp_diff))
         return corrected
@@ -166,7 +166,7 @@ def subtract_best_dark(dark_imagefilecollection,ccd):
         return ccd
     else:
         corrected = ccdproc.subtract_dark(ccd, best_dark, exposure_time='EXPTIME', exposure_unit=u.second)
-        corrected.header['CALIBRATION-DARK'] = best_dark_filename
+        corrected.header['CALDARK'] = best_dark_filename
         if temp_diff > 2:
             logging.warn('Temperature difference between dark and image = ' + str(temp_diff))
         return corrected
@@ -181,13 +181,12 @@ def flat_correct(flat_imagefilecollection,ccd):
     flats = generate_flat_dict_keyedby_filter_binning(flat_imagefilecollection)
     key = generate_key_filter_binning(ccd)
     candidate_flats = flats[key]
-    #TODO: find the best candidate flat based on closest in time relative to the ccd being corrected (instead of the first one in the collection)
     if candidate_flats is None:
         logging.error('Could not find flat for key ' + key)
     flat, last_date_diff = find_closest_date_match(candidate_flats, ccd)
     logging.warn('Seconds time difference between flat and image = ' + str(last_date_diff))
     corrected = ccdproc.flat_correct(ccd,flat)
-    corrected.header['CALIBRATION-FLAT-DATE'] = flat.header['DATE-OBS']
+    corrected.header['CALFLATDT'] = flat.header['DATE-OBS']
     return corrected
 
 
@@ -223,7 +222,7 @@ def resample_to_BIN2(ccd):
         logging.info('Resampling image to 50% with cubic interpolation')
         image_data = np.asarray(ccd)
         scaled_data = scipy.ndimage.zoom(image_data, .5, order=3)
-        scaled_fits = CCDData(scaled_data,unit='adu')
+        scaled_fits = CCDData(scaled_data, unit='adu')
         scaled_fits.meta = ccd.meta.copy()
         scaled_fits.header['XBINNING'] = 2
         scaled_fits.header['YBINNING'] = 2

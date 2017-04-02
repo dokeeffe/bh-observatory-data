@@ -64,7 +64,7 @@ class ImageCollectionUtilsTester(TestCase):
 
         # assert
         self.assertListEqual([10, 10, 10, 10, 10, 10, 10, 10, 10, 10],list(result.data))
-        self.assertEqual('data/bias-20x1.fits',result.header['CALIBRATION-BIAS'])
+        self.assertEqual('data/bias-20x1.fits',result.header['CALBIAS'])
         print(result.header)
 
     def test_subtract_best_dark(self):
@@ -79,7 +79,7 @@ class ImageCollectionUtilsTester(TestCase):
 
         # assert
         self.assertListEqual([10, 10, 10, 10, 10, 10, 10, 10, 10, 10],list(result.data))
-        self.assertEqual('data/dark-20x2_120.fits', result.header['CALIBRATION-DARK'])
+        self.assertEqual('data/dark-20x2_120.fits', result.header['CALDARK'])
         print(result.header)
 
     def test_flat_correct(self):
@@ -94,7 +94,7 @@ class ImageCollectionUtilsTester(TestCase):
 
         # assert
         self.assertEqual(145, result.data[0])
-        self.assertEqual('2017-04-01T21:03:22.409', result.header['CALIBRATION-FLAT-DATE'])
+        self.assertEqual('2017-04-01T21:03:22.409', result.header['CALFLATDT'])
         print(result.header)
 
     def test_resample_to_BIN2_from_bin2_returns_same(self):
