@@ -201,8 +201,8 @@ def find_closest_date_match(candidate_ccds, ccd):
     last_date_diff = sys.maxsize
     date_obs = datetime.datetime.strptime(ccd.header['DATE-OBS'], '%Y-%m-%dT%H:%M:%S.%f')
     for candidate in candidate_ccds:
-        date_flat = datetime.datetime.strptime(candidate.header['DATE-OBS'], '%Y-%m-%dT%H:%M:%S.%f')
-        candidate_date_difference = abs((date_obs - date_flat).total_seconds())
+        date_candidate = datetime.datetime.strptime(candidate.header['DATE-OBS'], '%Y-%m-%dT%H:%M:%S.%f')
+        candidate_date_difference = abs((date_obs - date_candidate).total_seconds())
         if candidate_date_difference < last_date_diff:
             last_date_diff = candidate_date_difference
             result = candidate
