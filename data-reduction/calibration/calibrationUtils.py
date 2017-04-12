@@ -271,3 +271,18 @@ def move_to_archive(directory,files, prefix='uncalibrated_archive_'):
         zf.close()
         logging.info('Processed files moved to archive ' + zf.filename);
 
+
+def find_dirs_containing_fits_files(root_path):
+    '''
+
+    :param self:
+    :param root_path:
+    :return:
+    '''
+    dirs = []
+    for root, subdirs, files in os.walk(root_path):
+        for subdir in subdirs:
+            if any(fname.endswith('.fits') for fname in os.listdir(os.path.join(root, subdir))):
+                dirs.append(os.path.join(root, subdir))
+    return dirs
+

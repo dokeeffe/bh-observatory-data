@@ -21,6 +21,7 @@ class ImageCollectionUtilsTester(TestCase):
 
     def test_combine_values_from_dictionary_and_write(self):
         assert True
+        # TODO: test this!
 
     def test_generate_dark_key(self):
         ccd = CCDData(np.zeros((10, 10)), unit=u.adu)
@@ -65,7 +66,6 @@ class ImageCollectionUtilsTester(TestCase):
         # assert
         self.assertListEqual([10, 10, 10, 10, 10, 10, 10, 10, 10, 10],list(result.data))
         self.assertEqual('data/bias-20x1.fits',result.header['CALBIAS'])
-        print(result.header)
 
     def test_subtract_best_dark(self):
         # arrange
@@ -80,7 +80,6 @@ class ImageCollectionUtilsTester(TestCase):
         # assert
         self.assertListEqual([10, 10, 10, 10, 10, 10, 10, 10, 10, 10],list(result.data))
         self.assertEqual('data/dark-20x2_120.fits', result.header['CALDARK'])
-        print(result.header)
 
     def test_flat_correct(self):
         # arrange
@@ -95,7 +94,6 @@ class ImageCollectionUtilsTester(TestCase):
         # assert
         self.assertEqual(145, result.data[0])
         self.assertEqual('2017-04-01T21:03:22.409', result.header['CALFLATDT'])
-        print(result.header)
 
     def test_resample_to_BIN2_from_bin2_returns_same(self):
         """
@@ -106,7 +104,7 @@ class ImageCollectionUtilsTester(TestCase):
         ccd.header['CCD-TEMP']=-20
         ccd.header['XBINNING']=2
         result = calibrationUtils.resample_to_BIN2(ccd)
-        assert result == ccd
+        self.assertEquals(result, ccd)
 
     def test_resample_to_BIN2(self):
         ccd = CCDData(np.arange(100).reshape(10,10), unit=u.adu)
@@ -116,27 +114,39 @@ class ImageCollectionUtilsTester(TestCase):
         ccd.header['NAXIS2'] = 10
         result = calibrationUtils.resample_to_BIN2(ccd)
         print(result)
-        assert result.data[0][2] == 4
-        assert result.data[2][3] == 52
-        assert result.data[4][4] == 99
+        self.assertEquals(result.data[0][2], 4)
+        self.assertEquals(result.data[2][3], 52)
+        self.assertEquals(result.data[4][4], 99)
 
     def test_generate_bias_key(self):
         ccd = CCDData(np.zeros((10, 10)), unit=u.adu)
         ccd.header['CCD-TEMP']=-20
         ccd.header['XBINNING']=2
         result = calibrationUtils.generate_bias_key(ccd)
-        assert result == '-20_2X'
+        self.assertEquals('-20_2X', result)
 
     def test_extract_date_timestamp_from(self):
         ccd = CCDData(np.zeros((10, 10)), unit=u.adu)
         ccd.header['DATE-OBS']='2016-09-01T00:35:51.3'
         result = calibrationUtils.extract_date_from(ccd)
-        assert result == '2016-09-01'
+        self.assertEquals('2016-09-01', result)
 
     def test_extract_datetime_timestamp_from(self):
         ccd = CCDData(np.zeros((10, 10)), unit=u.adu)
         ccd.header['DATE-OBS']='2016-09-01T00:35:51.3'
+
         result = calibrationUtils.extract_datetime_from(ccd)
-        assert result == '2016-09-01-00-35-51'
+        self.assertEquals('2016-09-01-00-35-51', result)
+
+    def test_find_dirs_containing_fits_files(self):
+
+        # act
+        result = calibrationUtils.find_dirs_containing_fits_files('data')
+
+        # assert
+        self.assertEquals('data/LIGHT/RED', result[0])
+        self.assertEquals('data/LIGHT/LUM', result[1])
+        self.assertEquals(2, len(result))
+
 
 

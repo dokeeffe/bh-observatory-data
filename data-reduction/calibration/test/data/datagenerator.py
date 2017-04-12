@@ -23,6 +23,47 @@ def setup_bias_data():
     ccd.header = metadata
     ccd.write('bias-25x2.fits')
 
+def setup_light_data():
+    ccd = CCDData(np.arange(10), unit="adu")
+    metadata = {'XBINNING': 1, 'FRAME': 'light', 'CCD-TEMP': -20, 'FILTER': 'Red', 'DATE-OBS': '2017-03-01T21:15:22.409' , 'EXPTIME': 120}
+    ccd.header = metadata
+    ccd.write('LIGHT/RED/light-20x1.fits')
+
+    ccd = CCDData(np.arange(10), unit="adu")
+    metadata = {'XBINNING': 2, 'FRAME': 'light', 'CCD-TEMP': -20, 'FILTER': 'Red', 'DATE-OBS': '2017-03-01T21:25:22.409', 'EXPTIME': 120,}
+    ccd.header = metadata
+    ccd.write('LIGHT/RED/light-20x2.fits')
+
+    ccd = CCDData(np.arange(10), unit="adu")
+    metadata = {'XBINNING': 1, 'FRAME': 'light', 'CCD-TEMP': -25, 'FILTER': 'Red', 'DATE-OBS': '2017-03-01T21:35:22.409', 'EXPTIME': 120}
+    ccd.header = metadata
+    ccd.write('LIGHT/RED/light-25x1.fits')
+
+    ccd = CCDData(np.arange(10), unit="adu")
+    metadata = {'XBINNING': 2, 'FRAME': 'light', 'CCD-TEMP': -25, 'FILTER': 'Red', 'DATE-OBS': '2017-03-01T21:45:22.409', 'EXPTIME': 120}
+    ccd.header = metadata
+    ccd.write('LIGHT/RED/light-25x2.fits')
+
+    ccd = CCDData(np.arange(10), unit="adu")
+    metadata = {'XBINNING': 1, 'FRAME': 'light', 'CCD-TEMP': -20, 'FILTER': 'Lum', 'DATE-OBS': '2017-03-01T21:15:22.409' , 'EXPTIME': 120}
+    ccd.header = metadata
+    ccd.write('LIGHT/LUM/light-20x1.fits')
+
+    ccd = CCDData(np.arange(10), unit="adu")
+    metadata = {'XBINNING': 2, 'FRAME': 'light', 'CCD-TEMP': -20, 'FILTER': 'Lum', 'DATE-OBS': '2017-03-01T21:25:22.409', 'EXPTIME': 120,}
+    ccd.header = metadata
+    ccd.write('LIGHT/LUM/light-20x2.fits')
+
+    ccd = CCDData(np.arange(10), unit="adu")
+    metadata = {'XBINNING': 1, 'FRAME': 'light', 'CCD-TEMP': -25, 'FILTER': 'Lum', 'DATE-OBS': '2017-03-01T21:35:22.409', 'EXPTIME': 120}
+    ccd.header = metadata
+    ccd.write('LIGHT/LUM/light-25x1.fits')
+
+    ccd = CCDData(np.arange(10), unit="adu")
+    metadata = {'XBINNING': 2, 'FRAME': 'light', 'CCD-TEMP': -25, 'FILTER': 'Lum', 'DATE-OBS': '2017-03-01T21:45:22.409', 'EXPTIME': 120}
+    ccd.header = metadata
+    ccd.write('LIGHT/LUM/light-25x2.fits')
+
 def setup_dark_data():
     ccd = CCDData(np.arange(10), unit="adu")
     metadata = {'XBINNING': 1, 'FRAME': 'Dark', 'CCD-TEMP': -20, 'EXPTIME': 120}
@@ -88,4 +129,4 @@ def setup_flat_data():
 
 
 
-setup_flat_data()
+setup_light_data()
