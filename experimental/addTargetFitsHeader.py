@@ -19,9 +19,10 @@ def add_target_header_from_dir_name():
                 for file in files:
                     if file.endswith('fits'):
                         hdulist = fits.open(os.path.join(subdir,file))
+                        data = hdulist[0].data
                         header = hdulist[0].header
                         header['TARGET'] = target_name
-                        fits.writeto(os.path.join(subdir,file), overwrite=True)
+                        fits.writeto(os.path.join(subdir,file), data, header, overwrite=True)
                         print('Updated TARGET header to {} for {} in {}'.format(target_name, file, subdir))
 
 if __name__ == '__main__':
