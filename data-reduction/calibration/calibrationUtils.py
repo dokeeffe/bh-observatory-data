@@ -264,9 +264,9 @@ def move_to_archive(directory,files, prefix='uncalibrated_archive_'):
     logging.info('Generating archive of raw files which have been calibrated (moving to zip file)')
     try:
         for file_to_archive in files:
-            zf.write(directory + file_to_archive, compress_type=compression, arcname=file_to_archive)
+            zf.write(os.path.join(directory, file_to_archive), compress_type=compression, arcname=file_to_archive)
         for file_to_archive in files:
-            os.remove(directory + file_to_archive)
+            os.remove(os.path.join(directory, file_to_archive))
     finally:
         zf.close()
         logging.info('Processed files moved to archive ' + zf.filename);
