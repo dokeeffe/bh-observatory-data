@@ -1,3 +1,5 @@
+#!/usr/bin/python
+
 import ConfigParser
 import json
 import logging
