@@ -40,7 +40,7 @@ def calibrate_light():
             files_to_archive = []
             # collect the raw light frames and collate by time, binning and temp, subtract appropriate Bias while collecting.
             for filename in light_ic.files_filtered(FRAME='Light'):
-                light_ccd = CCDData.read(light_ic.location + filename, unit=u.adu)
+                light_ccd = CCDData.read(os.path.join(light_ic.location,filename), unit=u.adu)
                 logging.info('Bias correcting ' + filename)
                 bias_corrected = calibrationUtils.subtract_best_bias_temp_match(master_bias_ic, light_ccd)
                 logging.info('Dark correcting ' + filename)

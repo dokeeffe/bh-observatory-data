@@ -1,4 +1,5 @@
 import numpy as np
+import os
 from unittest import TestCase
 import astropy.units as u
 
@@ -139,13 +140,15 @@ class ImageCollectionUtilsTester(TestCase):
         self.assertEquals('2016-09-01-00-35-51', result)
 
     def test_find_dirs_containing_fits_files(self):
+        # arrange
+        directory = os.path.join(os.getcwd(), 'data')
 
         # act
-        result = calibrationUtils.find_dirs_containing_fits_files('data')
+        result = calibrationUtils.find_dirs_containing_fits_files(directory)
 
         # assert
-        self.assertEquals('data/LIGHT/RED', result[0])
-        self.assertEquals('data/LIGHT/LUM', result[1])
+        self.assertEquals(os.path.join(os.getcwd(), 'data/LIGHT/RED'), result[0])
+        self.assertEquals(os.path.join(os.getcwd(), 'data/LIGHT/LUM'), result[1])
         self.assertEquals(2, len(result))
 
 
