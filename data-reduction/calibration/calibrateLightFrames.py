@@ -23,7 +23,7 @@ def calibrate_light():
 
     config = ConfigParser.ConfigParser()
     config.read('calibration.cfg')
-    outdir = config.get('Light_Paths', 'masterdir')
+    outdir = config.get('Light_Path', 'masterdir')
     if not os.path.isdir(outdir):
         os.mkdir(outdir)
     os.chdir(outdir)
