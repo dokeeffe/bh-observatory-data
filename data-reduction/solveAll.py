@@ -16,7 +16,7 @@ for root, dirnames, filenames in os.walk('/home/dokeeffe/Pictures/CalibratedLigh
         if not solved:
             rmtree('/tmp/solver', ignore_errors=True)
             os.mkdir('/tmp/solver')
-            print 'solving ' + os.path.join(root, filename)
+            print('solving ' + os.path.join(root, filename))
             temp_file = os.path.join('/tmp/solver', filename)
             copyfile(os.path.join(root, filename), temp_file)
             hdulist = fits.open(temp_file)
@@ -24,7 +24,7 @@ for root, dirnames, filenames in os.walk('/home/dokeeffe/Pictures/CalibratedLigh
             ra = header['OBJCTRA']
             dec = header['OBJCTDEC']
             focalLength = header.get('FOCALLEN', 1800)
-            print 'focalLength ' + str(focalLength)
+            print( 'focalLength ' + str(focalLength))
             binning = header['XBINNING']
             pixelSize = header['PIXSIZE1']
             arcSecPerPixel = (pixelSize / focalLength) * 206.3 * binning
@@ -34,9 +34,6 @@ for root, dirnames, filenames in os.walk('/home/dokeeffe/Pictures/CalibratedLigh
                 if retcode == 0:
                     copyfile(os.path.join('/tmp/solver', filename.replace('fits', 'new')), os.path.join(root, filename))
                 else:
-                    print 'could not solve'
+                    print('could not solve')
             except IOError:
-                print 'cpuls not solve'
-            # params = ['solve-field', '--no-verify', '--no-plots', '--no-fits2fits', '--resort', '--skip-solved', '-O', '-L', str(arcSecPerPixel*.95), '-H', str(arcSecPerPixel*1.05),'-u','app', temp_file]
-            # print params
-            # copy solved file back to overwrite original
+                print('IOerror, could not solve')

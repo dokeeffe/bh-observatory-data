@@ -1,3 +1,5 @@
+#!/usr/bin/python
+
 import sys
 from astropy.io import fits
 
