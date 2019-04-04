@@ -2,8 +2,8 @@ import fnmatch
 import os
 from astropy.io import fits
 
-search_ra = 18.53
-search_dec = 33.2
+search_ra = 2.3
+search_dec = 42.3
 search_radius = 1.5
 
 for root, dirnames, filenames in os.walk('/home/dokeeffe/Pictures/CalibratedLight'):
@@ -14,4 +14,5 @@ for root, dirnames, filenames in os.walk('/home/dokeeffe/Pictures/CalibratedLigh
         dec = header['OBJCTDEC']
         if ra > search_ra-search_radius and ra < search_ra+search_radius and dec > search_dec-search_radius and dec < search_dec+search_radius:
             print filename
+            print(header['EXPTIME'])
 

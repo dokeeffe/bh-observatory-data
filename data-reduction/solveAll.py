@@ -29,8 +29,9 @@ for root, dirnames, filenames in os.walk('/home/dokeeffe/Pictures/CalibratedLigh
             pixelSize = header['PIXSIZE1']
             arcSecPerPixel = (pixelSize / focalLength) * 206.3 * binning
             try:
-                retcode = subprocess.call(['solve-field', '--cpulimit', '30', '--no-plots', '--no-fits2fits', '--resort', '--skip-solved','--downsample','3', '-O', '-L',
-                         str(arcSecPerPixel * .85), '-H', str(arcSecPerPixel * 1.15), '-u', 'app', temp_file])
+                print('solve-field {} {} {} {} {} {} {} {} {} {} {} {} {} {} {}'.format('--cpulimit', '30', '--no-plots', '--resort', '--skip-solved','--downsample','2', '-O', '-L', '1.25', '-H', '1.27', '-u', 'app', temp_file))
+                retcode = subprocess.call(['solve-field', '--cpulimit', '30', '--no-plots', '--resort', '--skip-solved','--downsample','2', '-O', '-L',
+                         '1.25', '-H', '1.27', '-u', 'app', temp_file])
                 if retcode == 0:
                     copyfile(os.path.join('/tmp/solver', filename.replace('fits', 'new')), os.path.join(root, filename))
                 else:
