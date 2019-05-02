@@ -43,21 +43,25 @@ def calibrate_light():
             files_to_archive = []
             # collect the raw light frames and collate by time, binning and temp, subtract appropriate Bias while collecting.
             for filename in light_ic.files_filtered(FRAME='Light'):
-                light_ccd = CCDData.read(os.path.join(light_ic.location,filename), unit=u.adu)
-                logging.info('Bias correcting ' + filename)
+                filename_full_path = os.path.join(light_ic.location,filename)
+                light_ccd = CCDData.read(filename_full_path, unit=u.adu)
+                logging.info('Calibrating {}'.format(filename_full_path))
+                logging.info('    RES: {} x {} FILTER: {}'.format(light_ccd.header['NAXIS1'], light_ccd.header['NAXIS2'], light_ccd.header['FILTER']))
+                logging.info('    Bias correcting {}'.format(filename))
                 bias_corrected = calibrationUtils.subtract_best_bias_temp_match(master_bias_ic, light_ccd)
-                logging.info('Dark correcting ' + filename)
+                logging.info('    Dark correcting {}'.format(filename))
                 dark_corrected = calibrationUtils.subtract_best_dark(master_dark_ic, bias_corrected)
-                logging.info('Flat correcting ' + filename)
+                logging.info('    Flat correcting {}'.format(filename))
                 flat_corrected = calibrationUtils.flat_correct(master_flat_ic, dark_corrected)
                 # generate a date based dir and write callibrated data into the configured masterdir
                 date_dir = calibrationUtils.extract_date_from(flat_corrected)
+                logging.info('generating a date based dir {} to write callibrated data into {}'.format(date_dir, outdir))
                 if not os.path.isdir(outdir+date_dir):
                     os.mkdir(outdir+date_dir)
                 os.chdir(outdir+date_dir)
                 date_file_prefix  = calibrationUtils.extract_datetime_from(flat_corrected)
                 flat_corrected.write(date_file_prefix + filename, clobber=True)
-                logging.info('Written calibrated LIGHT ' + date_file_prefix + filename)
+                logging.info('Written calibrated LIGHT {}\n\n\n'.format(date_file_prefix + filename))
                 files_to_archive.append(filename)
             calibrationUtils.move_to_archive(rawdir_to_process, files_to_archive)
 

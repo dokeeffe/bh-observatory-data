@@ -33,8 +33,8 @@ def generate_flat_dict_keyedby_filter_binning_date(image_file_collection):
     :return:
     """
     raw_frames = {}
-    for filename in image_file_collection.files_filtered(FRAME='Flat Field'):
-        logging.debug('Collecting flat ' +filename)
+    for filename in image_file_collection.files_filtered(FRAME='Flat'):
+        logging.info('Collecting flat ' +filename)
         ccd = CCDData.read(image_file_collection.location + filename, unit = u.adu)
         flat_key = generate_key_filter_binning_date(ccd)
         if flat_key not in raw_frames:
@@ -50,7 +50,7 @@ def generate_flat_dict_keyedby_filter_binning(image_file_collection):
     :return:
     """
     raw_frames = {}
-    for filename in image_file_collection.files_filtered(FRAME='Flat Field'):
+    for filename in image_file_collection.files_filtered(FRAME='Flat'):
         logging.debug('Collecting flat ' +filename)
         ccd = CCDData.read(image_file_collection.location + filename, unit = u.adu)
         flat_key = generate_key_filter_binning(ccd)
@@ -134,9 +134,10 @@ def subtract_best_bias_temp_match(bias_imagefilecollection,ccd):
             best_bias_filename = os.path.join(bias_imagefilecollection.location, filename)
             temp_diff = abs(bias_candidate.header['CCD-TEMP'] - ccd.header['CCD-TEMP'])
     if best_bias is None:
-        logging.error('Could not find bias for, binning:' + str(ccd.header['XBINNING']) + ' temp:'+str(ccd.header['CCD-TEMP']))
-        # FIXME: throw an exception here, there should be no excuse for missing bias data!!!
+        raise RuntimeError('Could not find bias for, binning:' + str(ccd.header['XBINNING']) + ' temp:'+str(ccd.header['CCD-TEMP']))
         return ccd
+    if best_bias.header['NAXIS1'] != ccd.header['NAXIS1'] or best_bias.header['NAXIS2'] != ccd.header['NAXIS2']:
+        raise RuntimeError('Best match for bias does not match resolution of image {}x{}'.format(ccd.header['NAXIS1'], ccd.header['NAXIS2']))
     else:
         corrected = ccdproc.subtract_bias(ccd, best_bias)
         corrected.header['CALBIAS'] = best_bias_filename
@@ -169,6 +170,7 @@ def subtract_best_dark(dark_imagefilecollection,ccd):
         corrected.header['CALDARK'] = best_dark_filename
         if temp_diff > 2:
             logging.warn('Temperature difference between dark and image = ' + str(temp_diff))
+        logging.info('dark frame subtraction completed')
         return corrected
 
 def flat_correct(flat_imagefilecollection,ccd):
@@ -221,7 +223,11 @@ def resample_to_BIN2(ccd):
     else:
         logging.info('Resampling image to 50% with cubic interpolation')
         image_data = np.asarray(ccd)
+        if image_data.shape == (2529, 3354):
+            logging.warn('Odd shape, going to make even before binning')
+            image_data = np.delete(image_data,(0), axis=0)
         scaled_data = scipy.ndimage.zoom(image_data, .5, order=3)
+        logging.info('resampled to {}'.format(scaled_data.shape)) 
         scaled_fits = CCDData(scaled_data, unit='adu')
         scaled_fits.meta = ccd.meta.copy()
         scaled_fits.header['XBINNING'] = 2
