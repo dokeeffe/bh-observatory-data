@@ -12,7 +12,7 @@ os.mkdir('/tmp/solver')
 for root, dirnames, filenames in os.walk('/home/dokeeffe/Pictures/CalibratedLight'):
     for filename in fnmatch.filter(filenames, '*.fits'):
         original_hdu = fits.open(os.path.join(root, filename))
-        solved = 'CRVAL1' in original_hdu[0].header
+        solved = 'CRVAL1' in original_hdu[0].header and 'CD1_1' in original_hdu[0].header
         if not solved:
             rmtree('/tmp/solver', ignore_errors=True)
             os.mkdir('/tmp/solver')

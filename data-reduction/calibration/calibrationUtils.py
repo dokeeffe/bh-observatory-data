@@ -33,9 +33,12 @@ def generate_flat_dict_keyedby_filter_binning_date(image_file_collection):
     :return:
     """
     raw_frames = {}
-    for filename in image_file_collection.files_filtered(FRAME='Flat'):
+
+    flats = image_file_collection.files_filtered(FRAME='Flat') 
+    for filename in flats:
         logging.info('Collecting flat ' +filename)
         ccd = CCDData.read(image_file_collection.location + filename, unit = u.adu)
+        print(ccd.header)
         flat_key = generate_key_filter_binning_date(ccd)
         if flat_key not in raw_frames:
             raw_frames[flat_key] = []
@@ -50,8 +53,9 @@ def generate_flat_dict_keyedby_filter_binning(image_file_collection):
     :return:
     """
     raw_frames = {}
-    for filename in image_file_collection.files_filtered(FRAME='Flat'):
-        logging.debug('Collecting flat ' +filename)
+    flats = image_file_collection.files_filtered(FRAME='Flat')
+    for filename in flats:
+        logging.info('Collecting flat ' +filename)
         ccd = CCDData.read(image_file_collection.location + filename, unit = u.adu)
         flat_key = generate_key_filter_binning(ccd)
         if flat_key not in raw_frames:
@@ -137,6 +141,7 @@ def subtract_best_bias_temp_match(bias_imagefilecollection,ccd):
         raise RuntimeError('Could not find bias for, binning:' + str(ccd.header['XBINNING']) + ' temp:'+str(ccd.header['CCD-TEMP']))
         return ccd
     if best_bias.header['NAXIS1'] != ccd.header['NAXIS1'] or best_bias.header['NAXIS2'] != ccd.header['NAXIS2']:
+        print(ccd.header)
         raise RuntimeError('Best match for bias does not match resolution of image {}x{}'.format(ccd.header['NAXIS1'], ccd.header['NAXIS2']))
     else:
         corrected = ccdproc.subtract_bias(ccd, best_bias)
@@ -180,11 +185,12 @@ def flat_correct(flat_imagefilecollection,ccd):
     :param ccd:
     :return: the corrected image
     """
+    print(flat_imagefilecollection)
     flats = generate_flat_dict_keyedby_filter_binning(flat_imagefilecollection)
     key = generate_key_filter_binning(ccd)
+    if key not in flats:
+        logging.error('Could not find flat for key {} in {}'.format(key, flats.keys()))
     candidate_flats = flats[key]
-    if candidate_flats is None:
-        logging.error('Could not find flat for key ' + key)
     flat, last_date_diff = find_closest_date_match(candidate_flats, ccd)
     logging.warn('Seconds time difference between flat and image = ' + str(last_date_diff))
     corrected = ccdproc.flat_correct(ccd,flat)
