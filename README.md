@@ -1,2 +1,2 @@
 # bh-observatory-data
-Data managment for ballyhoura observatory
+Data managment for [http://ballyhouraobservatory.github.io](ballyhoura observatory)
