@@ -2,15 +2,10 @@ This weather data is from a home made weather station which monitors rain, sky t
 
 Readings are taken every minute (unless a major change in conditions then sooner)
 
-Readings look like this:
+Data is in CSV format with headings for :
 
-```
+* date_sensor_read The UTC timestamp of the reading
+* rain a True/False flag. True if the rain sensor has detected rain
+* sky_temperature Sky temp in deg c
+* ambient_temperature Ambient temp in deg c
 
-     {
-         "skyTemp" : -7.35,
-         "rain" : false,
-         "readingTimestamp" : "2019-04-08 03:15:58",
-         "outsideTemp" : 9.27
-      },
-
-```
