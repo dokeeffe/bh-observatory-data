@@ -1,6 +1,6 @@
 This weather data is from a home made weather station which monitors rain, sky temperature (IR) and ambient temperature.
 
-Readings are taken every minute (unless a major change in conditions then sooner)
+Readings are taken every minute (unless a major change in conditions is detected, then sooner)
 
 Data is in CSV format with headings for :
 
