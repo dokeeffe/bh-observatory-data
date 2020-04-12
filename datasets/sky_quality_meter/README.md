@@ -10,5 +10,6 @@ The format of this data is the standard unihedron format from the device.
 
 ## SQM_LU
 
-The data in this directory is from a USB SQM permanently installed inside he observatory and only records when the observatory is open.
-The format of this data is a CSV file 
+The data in this directory is from a USB SQM permanently installed **inside** the observatory and only records when the observatory is open and the telescope is capturing images. This data is extracted from the FITS headers of images captured while the telscope is working.
+
+The format of this data is a CSV file containing UTC timestamps and SQM readings
