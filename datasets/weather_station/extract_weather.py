@@ -5,7 +5,7 @@
 import requests
 import pandas as pd
 
-existing = pd.read_csv('weather.csv').set_index('date_sensor_read')
+existing = pd.read_csv('weather.csv.zip').set_index('date_sensor_read')
 
 r = requests.get(url='http://192.168.1.227:8080/weather/history?days=365')
 rows = []
