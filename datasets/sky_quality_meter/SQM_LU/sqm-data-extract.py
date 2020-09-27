@@ -9,13 +9,15 @@ from astropy.io import fits
 data = []
 for root, dirnames, filenames in os.walk('/home/dokeeffe/Pictures/CalibratedLight'):
     for filename in fnmatch.filter(filenames, '*.fits'):
-        hdulist = fits.open(os.path.join(root, filename))
-        header = hdulist[0].header
-        if 'MPSAS' in header:
-            sqm = header['MPSAS']
-            date_obs = header['DATE-OBS']
-            data.append([date_obs,sqm])
-
+        try:
+            hdulist = fits.open(os.path.join(root, filename))
+            header = hdulist[0].header
+            if 'MPSAS' in header:
+                sqm = header['MPSAS']
+                date_obs = header['DATE-OBS']
+                data.append([date_obs,sqm])
+        except:
+            print(f'Could not open {filename}')
 
 df = pd.DataFrame(data, columns=['datetime_obs', 'mpsas'])
 df = df.set_index('datetime_obs')
